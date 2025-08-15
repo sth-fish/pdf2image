@@ -57,6 +57,8 @@ def convert_from_path(
     use_pdftocairo: bool = False,
     timeout: int = None,
     hide_annotations: bool = False,
+    mono: bool = False,
+    thinlinemode: str = "none",
 ) -> List[Image.Image]:
     """Function wrapping pdftoppm and pdftocairo
 
@@ -104,6 +106,10 @@ def convert_from_path(
     :type timeout: int, optional
     :param hide_annotations: Hide PDF annotations in the output, defaults to False
     :type hide_annotations: bool, optional
+    :param mono: Output monochrome image(s), defaults to False
+    :type mono: bool, optional
+    :param thinlinemode: set thin line mode: none, solid, shape. defaults to "none"
+    :type thinlinemode: str, optional
     :raises NotImplementedError: Raised when conflicting parameters are given (hide_annotations for pdftocairo)
     :raises PDFPopplerTimeoutError: Raised after the timeout for the image processing is exceeded
     :raises PDFSyntaxError: Raised if there is a syntax error in the PDF and strict=True
@@ -209,6 +215,8 @@ def convert_from_path(
                 grayscale,
                 size,
                 hide_annotations,
+                mono,
+                thinlinemode,
             )
 
             if use_pdfcairo:
@@ -401,6 +409,8 @@ def _build_command(
     grayscale: bool,
     size: Union[int, Tuple[int, int]],
     hide_annotations: bool,
+    mono: bool,
+    thinlinemode: str,
 ) -> List[str]:
     if use_cropbox:
         args.append("-cropbox")
@@ -437,6 +447,13 @@ def _build_command(
 
     if grayscale:
         args.append("-gray")
+
+    if mono:
+        args.append("-mono")
+
+    if thinlinemode:
+        args.append("-thinlinemode")
+        args.append(thinlinemode)
 
     if size is None:
         pass
