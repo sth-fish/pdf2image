@@ -58,7 +58,7 @@ def convert_from_path(
     timeout: int = None,
     hide_annotations: bool = False,
     mono: bool = False,
-    thinlinemode: str = "none",
+    thinlinemode: str = None",
 ) -> List[Image.Image]:
     """Function wrapping pdftoppm and pdftocairo
 
@@ -108,7 +108,7 @@ def convert_from_path(
     :type hide_annotations: bool, optional
     :param mono: Output monochrome image(s), defaults to False
     :type mono: bool, optional
-    :param thinlinemode: set thin line mode: none, solid, shape. defaults to "none"
+    :param thinlinemode: set thin line mode: none, solid, shape. defaults to None
     :type thinlinemode: str, optional
     :raises NotImplementedError: Raised when conflicting parameters are given (hide_annotations for pdftocairo)
     :raises PDFPopplerTimeoutError: Raised after the timeout for the image processing is exceeded
@@ -223,6 +223,10 @@ def convert_from_path(
                 if hide_annotations:
                     raise NotImplementedError(
                         "Hide annotations flag not implemented in pdftocairo."
+                    )
+                if thinlinemode != None:
+                    raise NotImplementedError(
+                        "Thin line mode not implemented in pdftocairo."
                     )
                 args = [_get_command_path("pdftocairo", poppler_path)] + args
             else:
@@ -451,7 +455,7 @@ def _build_command(
     if mono:
         args.append("-mono")
 
-    if thinlinemode:
+    if thinlinemode is not None:
         args.append("-thinlinemode")
         args.append(thinlinemode)
 
